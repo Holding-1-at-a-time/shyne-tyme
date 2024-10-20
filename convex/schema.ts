@@ -21,6 +21,21 @@ export default defineSchema({
     clerkId: v.string(),
   }).index("by_clerk_id", ["clerkId"]),
 
+  tenant: defineTable({
+    userId: v.id("users"),
+    name: v.string(),
+    email: v.string(),
+    phone: v.string(),
+    address: v.string(),
+    city: v.string(),
+    state: v.string(),
+    zip: v.string(),
+    country: v.string(),
+    preferences: v.array(v.string()),
+  })
+  .index("by_user_id", ["userId"])
+  .index("by_user_id_and_name", ["userId", "name"]),
+
   appointments: defineTable({
     userId: v.id("users"),
     service: v.string(),
@@ -29,7 +44,7 @@ export default defineSchema({
     status: v.string(),
   }).index("by_user_id", ["userId"]),
 
-  customers: defineTable({
+  clients: defineTable({
     userId: v.id("users"),
     name: v.string(),
     email: v.string(),
