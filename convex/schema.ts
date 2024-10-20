@@ -44,7 +44,7 @@ export default defineSchema({
     status: v.string(),
   }).index("by_user_id", ["userId"]),
 
-  clients: defineTable({
+  customers: defineTable({
     userId: v.id("users"),
     name: v.string(),
     email: v.string(),

@@ -13,50 +13,37 @@
 import { Ollama } from "ollama";
 import { TimeoutError } from 'node:errors';
 import { Error } from 'global';
+import { Appointment } from "@/types/appointmentsTypes";
 
 const ollama = new Ollama();
 
-type Appointment = {
-  serviceDuration: number;
-  location: string;
-  clientName: string;
-  appointmentDate: Date;
-  isConfirmed: boolean;
-  serviceType: string;
-  notes: string;
-  contactNumber: string;
-  isCancelled: boolean;
-  serviceId: string;
-  userId: string;
-  id: string;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt: Date | null;
-  vehicleId: string;
-  vehiclePlate: string;
-  vehicleMake: string;
-  vehicleModel: string;
-  vehicleColor: string;
-  vehicleYear: number;
-  vehicleVIN: string;
-  vehicleLicensePlate: string;
-  vehicleBodyType: string;
-  // Add any other necessary fields for detailed appointment information
+function validateAppointments(appointments: unknown): asserts appointments is Appointment[] {
+  if (!Array.isArray(appointments) || appointments.some(appointments => typeof appointments !== 'object')) {
+    throw new Error('Invalid appointments data');
+  }
 };
 
-export async function optimizeAppointments(appointments: Omit<Appointment, 'contactNumber' | 'vehicleId' | 'vehicleVIN' | 'vehicleLicensePlate' | 'vehicleBodyType'>[]) {
-  if (!Array.isArray(appointments) || appointments.some(appt => typeof appt !== 'object')) {
+export async function optimizeAppointments(appointments: Omit<Appointment, 'contactNumber' | 'vehicleId' | 'vehicleVIN' | 'vehicleLicensePlate' | 'vehicleBodyType'>[
+]) {
+  if (!Array.isArray(appointments) || appointments.some(appointments => typeof appointments !== 'object')) {
     throw new Error('Appointments data is invalid. Please provide an array of valid appointment objects.');
   }
-
   const ollama = new Ollama();
   const sanitizedAppointments = appointments.map(({ serviceDuration, location, clientName, appointmentDate, isConfirmed, serviceType, notes, isCancelled, serviceId, userId, id, createdAt, updatedAt, deletedAt, vehicleId, vehiclePlate, vehicleMake, vehicleModel, vehicleColor, vehicleYear }) => ({
     serviceDuration, location, clientName, appointmentDate, isConfirmed, serviceType, notes, isCancelled, serviceId, userId, id, createdAt, updatedAt, deletedAt, vehicleId, vehiclePlate, vehicleMake, vehicleModel, vehicleColor, vehicleYear
   }));
-  const prompt = `Given the following appointments: ${JSON.stringify(sanitizedAppointments)}, 
-    suggest an optimized schedule considering factors like service duration, 
-    location, and potential traffic. Provide the output as a JSON array of 
-    optimized appointments.`;
+  try {
+    const prompt = `Given the following appointments: ${JSON.stringify(sanitizedAppointments, null, 2)}, 
+        suggest an optimized schedule considering factors like service duration, 
+        location, and potential traffic. Provide the output as a JSON array of 
+        optimized appointments.`;
+  } catch (error) {
+    console.error('Error during JSON.stringify operation:', error);
+    throw error;
+  }
+
+  validateAppointments(appointments);
+
 
   const controller = new AbortController();
   const signal = controller;

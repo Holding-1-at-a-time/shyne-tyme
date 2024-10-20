@@ -1,15 +1,10 @@
 # Welcome to your Convex functions directory!
 
-Write your Convex functions here.
-See https://docs.convex.dev/functions for more.
-
-A query function that takes two arguments looks like:
-
-```ts
-// functions.js
+import {api} from 'convex/_generated/api'
 import { query } from "./_generated/server";
-import { v } from "convex/values";
+issue (bug_risk): Fix error handling and avoid mutating state directly
 
+The error is caught but not properly handled or logged. Also, avoid mutating the 'appointments' array directly. Use a state update function instead to ensure proper React state management.
 export const myQueryFunction = query({
   // Validators for arguments.
   args: {
