@@ -2,7 +2,7 @@
     * @description      : 
     * @author           : Owner
     * @group            : 
-    * @created          : 20/10/2024 - 06:24:58
+    * @created          : 20/10/2024 - 09:53:16
     * 
     * MODIFICATION LOG
     * - Version         : 1.0.0
@@ -10,13 +10,21 @@
     * - Author          : Owner
     * - Modification    : 
 **/
-// middleware.ts
-import { authMiddleware } from "@clerk/nextjs";
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 
-export default authMiddleware({
-  publicRoutes: ["/", "/api/webhook/clerk"],
-});
+const isPublicRoute = createRouteMatcher(['/sign-in(.*)', '/sign-up(.*)'])
+
+export default clerkMiddleware((auth, request) => {
+  if (!isPublicRoute(request)) {
+    auth().protect()
+  }
+})
 
 export const config = {
-  matcher: ["/((?!.*\\..*|_next).*)", "/", "/(api|trpc)(.*)"],
-};
+  matcher: [
+    // Skip Next.js internals and all static files, unless found in search params
+    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    // Always run for API routes
+    '/(api|trpc)(.*)',
+  ],
+}
