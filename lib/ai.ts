@@ -31,5 +31,5 @@ export async function optimizeAppointments(appointments: any[]) {
     prompt,
   });
 
-  return JSON.parse(response.tex);
+  return JSON.parse(response."context");
 }
