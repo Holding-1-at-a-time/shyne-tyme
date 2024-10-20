@@ -81,8 +81,8 @@ export async function optimizeAppointments(appointments: Omit<Appointment, 'cont
       throw error;
     }
     if (error instanceof Error) {
-      console.error(`Error in optimizeAppointments: ${Error.message}`);
-      console.error(Error.stack);
+      console.error(`Error in optimizeAppointments: ${error.message}`);
+      console.error(error.stack);
     } else {
       console.error(`Unknown error: ${error}`);
     }
